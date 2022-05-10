@@ -1,0 +1,184 @@
+@use 'sass:color';
+@use 'sass:math';
+@import './abstracts/all';
+
+$colors: (
+        "green": hsl(123, 47%, 74%),
+        "blue": hsl(210, 47%, 74%),
+        "orange": hsl(34, 93%, 77%),
+        "purple": hsl(231, 44%, 76%),
+        "yellow": hsl(54, 76%, 79%),
+        "brown": hsl(20, 41%, 69%),
+        "red": hsl(0, 59%, 76%),
+        "pink": hsl(295, 42%, 72%),
+        "white": hsl(0, 0%, 100%),
+);
+
+:root {
+  @each $name, $value in $colors {
+    --#{$name}-light: #{$value};
+    --#{$name}-dark: #{color.adjust($value, $lightness: -40%)};
+  }
+}
+
+
+body {
+  font-family: system-ui;
+  display: grid;
+  place-content: center;
+  min-height: 100vh;
+  background-color: $gray-2;
+}
+
+.orbit {
+  $_size: 12rem;
+  $_speed: 80s;
+
+  &__image-wrapper {
+    z-index: 20;
+    width: $_size;
+    position: relative;
+  }
+
+  &__image-person {
+    position: absolute;
+    transition: opacity .5s;
+
+    @include except(first) {
+      @include hover {
+        opacity: 0;
+      }
+    }
+  }
+
+  &__list {
+    margin: 0;
+    display: grid;
+    place-items: center;
+    position: relative;
+    list-style: none;
+    transform-origin: center;
+    animation: orbit $_speed linear infinite var(--orbit-state, running);
+    @include size($_size);
+
+    @include hover {
+      animation-play-state: paused;
+      --orbit-state: paused;
+    }
+  }
+
+  &__list-item {
+    position: absolute;
+    aspect-ratio: 1 / 1;
+    width: 8rem;
+    background-color: var(--icon-background, black);
+    font-weight: $f-weight-5;
+    text-align: center;
+    line-height: 1;
+    display: grid;
+    place-items: center;
+    @include border-radius(50%);
+
+    @include every() {
+      border-radius: inherit;
+      display: grid;
+      place-items: center;
+      position: absolute;
+      animation: orbit $_speed linear reverse infinite var(--orbit-state, running), throb .7s var(--throb-delay, 100ms) ease-in-out infinite alternate-reverse var(--throb-state, running);
+      @include size(100%);
+    }
+
+    @include hover() {
+      --throb-state: paused;
+      --orbit-state: paused;
+    }
+
+    @for $i from 1 through 7 {
+      &:nth-child(#{$i + 1}) {
+        --throb-delay: #{60ms * $i};
+      }
+    }
+
+    @include only(first) {
+      --icon-background: var(--blue-light);
+      --text-background: var(--blue-dark);
+      @include pos(14rem, 0rem);
+    }
+
+    @include only(2) {
+      --icon-background: var(--green-light);
+      --text-background: var(--green-dark);
+      @include pos(10rem, 10rem)
+    }
+
+    @include only(3) {
+      --icon-background: var(--pink-light);
+      --text-background: var(--pink-dark);
+      @include pos(0rem, 14rem)
+    }
+
+    @include only(4) {
+      --icon-background: var(--red-light);
+      --text-background: var(--red-dark);
+      @include pos(-10rem, 10rem)
+    }
+
+    @include only(5) {
+      --icon-background: var(--brown-light);
+      --text-background: var(--brown-dark);
+      @include pos(-14rem, 0rem)
+    }
+
+    @include only(6) {
+      --icon-background: var(--yellow-light);
+      --text-background: var(--yellow-dark);
+      @include pos(-10rem, -10rem)
+    }
+
+    @include only(7) {
+      --icon-background: var(--purple-light);
+      --text-background: var(--purple-dark);
+      @include pos(0rem, -14rem)
+    }
+
+    @include only(8) {
+      --icon-background: var(--orange-light);
+      --text-background: var(--orange-dark);
+      @include pos(10rem, -10rem)
+    }
+  }
+
+  &__icon-wrapper {
+    background-color: var(--icon-background);
+  }
+
+  &__list-description {
+    opacity: 0;
+    transition: all .25s;
+    background-color: var(--text-background);
+    color: white;
+
+    .orbit__list-item:hover & {
+      opacity: 1;
+    }
+  }
+}
+
+@keyframes orbit {
+  100% {
+    rotate: 1turn;
+  }
+}
+
+@keyframes hold-orbit {
+  100% {
+    rotate: -1turn;
+  }
+}
+
+@keyframes throb {
+
+  100% {
+    scale: 1.08;
+  }
+}
