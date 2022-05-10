@@ -1,3 +1,7 @@
 # seamlesshr-circle-clone
 
-animated circle clone from https://seamlesshr.com/
+Animated circle clone from https://seamlesshr.com/ only css
+
+Live website: https://seamlesshr-circle-clone-martin-kamir.netlify.app/
+
+Animation currently working only in chrome canary, because of using :has()
